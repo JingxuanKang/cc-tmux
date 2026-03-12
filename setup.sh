@@ -71,6 +71,14 @@ install_packages() {
   fi
 }
 
+ensure_projects_dir() {
+  local projects_dir="$HOME/Claude"
+  if [[ ! -d "$projects_dir" ]]; then
+    log "Creating $projects_dir"
+    mkdir -p "$projects_dir"
+  fi
+}
+
 write_tmux_conf() {
   local tmux_conf="$HOME/.tmux.conf"
   log "Writing $tmux_conf"
@@ -104,7 +112,7 @@ PY
 
 # >>> tmux-cc-ccl >>>
 cc() {
-    tmux new-session -A -s claude
+    tmux new-session -A -s claude -c ~/Claude
 }
 
 ccl() {
@@ -125,7 +133,7 @@ ccl() {
         name="${name// /_}"
         name="${name//:/_}"
         name="${name//./_}"
-        tmux new-session -A -s "$name"
+        tmux new-session -A -s "$name" -c ~/Claude
     else
         tmux attach -t "$target"
     fi
@@ -168,6 +176,7 @@ main() {
   log "Using rc file: $rc_file"
 
   install_packages
+  ensure_projects_dir
   write_tmux_conf
   append_shell_functions "$rc_file"
   print_next_steps "$rc_file"
